@@ -1,6 +1,6 @@
 ## File browser
 
-This is a simple tabular based file browser build using Rust+Reactjs using tauri.
+This is a simple tabular based file browser built using Rust+Reactjs using tauri.
 
 
 ## Features
