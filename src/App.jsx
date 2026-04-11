@@ -137,13 +137,13 @@ function App() {
 
   return (
     <div className="layout w-screen h-screen flex flex-col bg-gray-50 text-gray-800">
-      <header className="header p-4 bg-white border-b shadow-sm shrink-0">
+      <header className="header p-4 bg-white border-gray-100 border-solid border-2 shrink-0">
         <div className="flex flex-row justify-between flex-wrap gap-4">
           <div className="flex flex-row gap-2 flex-wrap items-center">
             <button
               onClick={goBack}
               disabled={history.length === 0}
-              className="mr-2 flex items-center justify-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border rounded shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="mr-2 flex items-center justify-center px-3 py-1.5 text-lg font-medium text-gray-700 bg-white border rounded shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <svg
                 className="w-3 h-3 mr-1"
@@ -173,7 +173,7 @@ function App() {
               />
               <label
                 htmlFor="all"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 All
               </label>
@@ -189,7 +189,7 @@ function App() {
               />
               <label
                 htmlFor="img"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 Images
               </label>
@@ -205,7 +205,7 @@ function App() {
               />
               <label
                 htmlFor="video"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 Videos
               </label>
@@ -221,7 +221,7 @@ function App() {
               />
               <label
                 htmlFor="pdf"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 PDFs
               </label>
@@ -237,7 +237,7 @@ function App() {
               />
               <label
                 htmlFor="sheets"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 Sheets
               </label>
@@ -253,7 +253,7 @@ function App() {
               />
               <label
                 htmlFor="docs"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 Docs
               </label>
@@ -283,7 +283,7 @@ function App() {
               />
               <label
                 htmlFor="date-created"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 Date Created
               </label>
@@ -300,7 +300,7 @@ function App() {
               />
               <label
                 htmlFor="date-modified"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 Date Modified
               </label>
@@ -317,7 +317,7 @@ function App() {
               />
               <label
                 htmlFor="date-accessed"
-                className="flex items-center justify-center px-3 py-1.5 text-sm rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
+                className="flex items-center justify-center px-3 py-1.5 text-lg rounded bg-gray-200 cursor-pointer peer-checked/img:bg-blue-500 peer-checked/img:text-white transition-colors"
               >
                 Date Accessed
               </label>
@@ -326,7 +326,7 @@ function App() {
         </div>
       </header>
 
-      <aside className="w-56 bg-white overflow-y-auto shrink-0 flex flex-col p-4 shadow-sm z-10">
+      <aside className="bg-white overflow-y-auto shrink-0 flex flex-col p-4 shadow-sm z-10">
         <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
           Bookmarks
         </h3>

@@ -209,8 +209,8 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
           <tbody key={dateLabel} className="bg-sky-900">
             <tr className="bg-gray-50/90">
               <td
-                colSpan="6"
-                className="px-6 py-2 font-semibold text-gray-800 text-xs shadow-sm sticky top-10 z-10 bg-gray-50/90"
+                colSpan="8"
+                className="px-6 py-2 font-semibold text-gray-800 text-lg shadow-sm sticky top-10 z-10 bg-gray-50/90"
               >
                 {dateLabel}
               </td>
@@ -230,11 +230,21 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
                   title={file.name}
                 >
                   <div className="flex items-center gap-2">
-                    {getFileIcon(file)}
+                    {/* {getFileIcon(file)}*/}
                     <span className="truncate">{file.name}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4">{file.is_dir ? "Folder" : "File"}</td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    {getFileIcon(file)}
+                    {file.is_dir ? "Folder" : ""}
+                    {!file.is_dir
+                      ? file.name.slice(
+                          ((file.name.lastIndexOf(".") - 1) >>> 0) + 2,
+                        )
+                      : ""}
+                  </div>
+                </td>
                 <td className="px-6 py-4">
                   {file.is_dir ? "-" : formatSize(file.size)}
                 </td>
