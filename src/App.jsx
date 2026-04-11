@@ -9,17 +9,19 @@ function App() {
   const [history, setHistory] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("date-modified");
+  const [baseDir, setBaseDir] = useState("/home");
 
-  const baseDir = "/home/arun";
+  // const baseDir = "/home/arun";
+
   const bookmarks = [
-    { name: 'Home', path: baseDir },
-    { name: 'Desktop', path: `${baseDir}/Desktop` },
-    { name: 'Documents', path: `${baseDir}/Documents` },
-    { name: 'Downloads', path: `${baseDir}/Downloads` },
-    { name: 'Music', path: `${baseDir}/Music` },
-    { name: 'Pictures', path: `${baseDir}/Pictures` },
-    { name: 'Videos', path: `${baseDir}/Videos` },
-    { name: 'Trash', path: `${baseDir}/.local/share/Trash/files` },
+    { name: "Home", path: baseDir },
+    { name: "Desktop", path: `${baseDir}/Desktop` },
+    { name: "Documents", path: `${baseDir}/Documents` },
+    { name: "Downloads", path: `${baseDir}/Downloads` },
+    { name: "Music", path: `${baseDir}/Music` },
+    { name: "Pictures", path: `${baseDir}/Pictures` },
+    { name: "Videos", path: `${baseDir}/Videos` },
+    { name: "Trash", path: `${baseDir}/.local/share/Trash/files` },
   ];
 
   const [filters, setFilters] = useState({
@@ -59,6 +61,8 @@ function App() {
     async function init() {
       const defaultPwd = await invoke("get_default_pwd");
       await loadDirectory(defaultPwd);
+      const dir = await invoke("get_home_dir");
+      setBaseDir(dir);
     }
     init();
   }, []);
@@ -77,7 +81,8 @@ function App() {
       }
 
       const next = { ...prev, [key]: !prev[key] };
-      const anyActive = next.img || next.video || next.pdf || next.sheets || next.docs;
+      const anyActive =
+        next.img || next.video || next.pdf || next.sheets || next.docs;
       next.all = !anyActive;
 
       return next;
@@ -97,7 +102,9 @@ function App() {
       // 2. filters
       if (filters.all) return true;
 
-      const ext = f.name.includes(".") ? f.name.split(".").pop().toLowerCase() : "";
+      const ext = f.name.includes(".")
+        ? f.name.split(".").pop().toLowerCase()
+        : "";
 
       // img
       if (
@@ -107,10 +114,7 @@ function App() {
         return true;
 
       // video
-      if (
-        filters.video &&
-        ["mp4", "mkv", "avi", "mov", "webm"].includes(ext)
-      )
+      if (filters.video && ["mp4", "mkv", "avi", "mov", "webm"].includes(ext))
         return true;
 
       // pdf
@@ -128,7 +132,7 @@ function App() {
     });
   }, [files, searchQuery, filters]);
 
-  const folderCount = filteredFiles.filter(f => f.is_dir).length;
+  const folderCount = filteredFiles.filter((f) => f.is_dir).length;
   const fileCount = filteredFiles.length - folderCount;
 
   return (
@@ -136,14 +140,25 @@ function App() {
       <header className="header p-4 bg-white border-b shadow-sm shrink-0">
         <div className="flex flex-row justify-between flex-wrap gap-4">
           <div className="flex flex-row gap-2 flex-wrap items-center">
-
             <button
               onClick={goBack}
               disabled={history.length === 0}
               className="mr-2 flex items-center justify-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border rounded shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              <svg className="w-3 h-3 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13" />
+              <svg
+                className="w-3 h-3 mr-1"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 8 14"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
+                />
               </svg>
               Back
             </button>
@@ -311,19 +326,20 @@ function App() {
         </div>
       </header>
 
-
-
       <aside className="w-56 bg-white overflow-y-auto shrink-0 flex flex-col p-4 shadow-sm z-10">
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Bookmarks</h3>
+        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+          Bookmarks
+        </h3>
         <nav className="flex flex-col gap-1">
           {bookmarks.map((b) => (
             <button
               key={b.name}
               onClick={() => loadDirectory(b.path)}
-              className={`text-left px-3 py-2 text-lg rounded transition-colors ${path === b.path
-                ? "bg-blue-100 text-blue-700 font-semibold"
-                : "text-gray-600 hover:bg-gray-100"
-                }`}
+              className={`text-left px-3 py-2 text-lg rounded transition-colors ${
+                path === b.path
+                  ? "bg-blue-100 text-blue-700 font-semibold"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
             >
               {b.name}
             </button>
@@ -339,8 +355,14 @@ function App() {
         />
       </main>
       <footer className="footer flex justify-between items-center px-4 py-2 bg-gray-100 border-t border-gray-200 text-sm font-medium text-gray-600">
-        <h2>Current directory: <span className="font-semibold text-gray-800">{path}</span></h2>
-        <h2>{folderCount} Folders <span className="mx-2 opacity-50">|</span> {fileCount} Files</h2>
+        <h2>
+          Current directory:{" "}
+          <span className="font-semibold text-gray-800">{path}</span>
+        </h2>
+        <h2>
+          {folderCount} Folders <span className="mx-2 opacity-50">|</span>{" "}
+          {fileCount} Files
+        </h2>
       </footer>
     </div>
   );

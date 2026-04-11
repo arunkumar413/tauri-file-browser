@@ -21,7 +21,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             get_default_pwd,
-            commands::file_system::read_dir
+            commands::file_system::read_dir,
+            commands::file_system::get_home_dir
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
