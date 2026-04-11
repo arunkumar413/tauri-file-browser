@@ -186,6 +186,9 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-20 shadow-sm border-b border-gray-200">
           <tr>
             <th scope="col" className="px-6 py-3">
+              Select
+            </th>
+            <th scope="col" className="px-6 py-3">
               Name
             </th>
             <th scope="col" className="px-6 py-3">
@@ -225,6 +228,9 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
                   }
                 }}
               >
+                <td className="px-6 py-2 text-lg text-gray-900">
+                  <input type="checkbox" className="w-4 h-4" />
+                </td>
                 <td
                   className="px-6 py-2 text-lg text-gray-900 truncate max-w-[300px]"
                   title={file.name}
