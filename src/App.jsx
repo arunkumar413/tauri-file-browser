@@ -34,11 +34,11 @@ function App() {
   const loadDirectory = async (targetPath, addToHistory = true) => {
     try {
       const resFiles = await invoke("read_dir", { path: targetPath });
-      
+
       if (addToHistory && path) {
         setHistory((prev) => [...prev, path]);
       }
-      
+
       setPath(targetPath);
       setFiles(resFiles);
       setSearchQuery(""); // Optionally clear search on navigate
@@ -64,26 +64,24 @@ function App() {
   }, []);
 
   const handleFilterChange = (key) => {
-    if (key === "all") {
-      setFilters((prev) => ({
-        ...Object.keys(prev).reduce(
-          (acc, k) => {
-            acc[k] = false;
-            return acc;
-          },
-          {}
-        ),
-        all: true,
-      }));
-    } else {
-      setFilters((prev) => {
-        const next = { ...prev, [key]: !prev[key] };
-        next.all = !Object.values(next).some(
-          (val, idx) => Object.keys(next)[idx] !== "all" && val
-        );
-        return next;
-      });
-    }
+    setFilters((prev) => {
+      if (key === "all") {
+        return {
+          all: true,
+          img: false,
+          video: false,
+          pdf: false,
+          sheets: false,
+          docs: false,
+        };
+      }
+
+      const next = { ...prev, [key]: !prev[key] };
+      const anyActive = next.img || next.video || next.pdf || next.sheets || next.docs;
+      next.all = !anyActive;
+
+      return next;
+    });
   };
 
   const filteredFiles = useMemo(() => {
@@ -99,29 +97,29 @@ function App() {
       // 2. filters
       if (filters.all) return true;
 
-      const ext = f.name.split(".").pop().toLowerCase();
-      
+      const ext = f.name.includes(".") ? f.name.split(".").pop().toLowerCase() : "";
+
       // img
       if (
         filters.img &&
         ["jpg", "jpeg", "png", "gif", "svg", "webp"].includes(ext)
       )
         return true;
-      
+
       // video
       if (
         filters.video &&
         ["mp4", "mkv", "avi", "mov", "webm"].includes(ext)
       )
         return true;
-      
+
       // pdf
       if (filters.pdf && ext === "pdf") return true;
-      
+
       // sheets
       if (filters.sheets && ["xls", "xlsx", "csv", "ods"].includes(ext))
         return true;
-      
+
       // docs
       if (filters.docs && ["doc", "docx", "txt", "rtf", "odt"].includes(ext))
         return true;
@@ -130,19 +128,22 @@ function App() {
     });
   }, [files, searchQuery, filters]);
 
+  const folderCount = filteredFiles.filter(f => f.is_dir).length;
+  const fileCount = filteredFiles.length - folderCount;
+
   return (
     <div className="layout w-screen h-screen flex flex-col bg-gray-50 text-gray-800">
       <header className="header p-4 bg-white border-b shadow-sm shrink-0">
         <div className="flex flex-row justify-between flex-wrap gap-4">
           <div className="flex flex-row gap-2 flex-wrap items-center">
-            
+
             <button
               onClick={goBack}
               disabled={history.length === 0}
               className="mr-2 flex items-center justify-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border rounded shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <svg className="w-3 h-3 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"/>
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13" />
               </svg>
               Back
             </button>
@@ -251,7 +252,7 @@ function App() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          
+
           <div className="flex flex-row gap-2 flex-wrap items-center">
             <div className="flex items-center text-sm font-medium mr-2">
               Sort by:
@@ -312,34 +313,35 @@ function App() {
 
 
 
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="w-56 bg-white border-r overflow-y-auto shrink-0 flex flex-col p-4 shadow-sm z-10">
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Bookmarks</h3>
-          <nav className="flex flex-col gap-1">
-            {bookmarks.map((b) => (
-              <button
-                key={b.name}
-                onClick={() => loadDirectory(b.path)}
-                className={`text-left px-3 py-2 text-sm rounded transition-colors ${
-                  path === b.path
-                    ? "bg-blue-100 text-blue-700 font-semibold"
-                    : "text-gray-600 hover:bg-gray-100"
+      <aside className="w-56 bg-white overflow-y-auto shrink-0 flex flex-col p-4 shadow-sm z-10">
+        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Bookmarks</h3>
+        <nav className="flex flex-col gap-1">
+          {bookmarks.map((b) => (
+            <button
+              key={b.name}
+              onClick={() => loadDirectory(b.path)}
+              className={`text-left px-3 py-2 text-lg rounded transition-colors ${path === b.path
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "text-gray-600 hover:bg-gray-100"
                 }`}
-              >
-                {b.name}
-              </button>
-            ))}
-          </nav>
-        </aside>
-        
-        <main className="main flex-1 overflow-hidden flex bg-white">
-          <Table 
-            files={filteredFiles} 
-            sortOption={sortOption} 
-            onFolderDoubleClick={loadDirectory}
-          />
-        </main>
-      </div>
+            >
+              {b.name}
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      <main className="main flex-1 overflow-hidden flex flex-col bg-white">
+        <Table
+          files={filteredFiles}
+          sortOption={sortOption}
+          onFolderDoubleClick={loadDirectory}
+        />
+      </main>
+      <footer className="footer flex justify-between items-center px-4 py-2 bg-gray-100 border-t border-gray-200 text-sm font-medium text-gray-600">
+        <h2>Current directory: <span className="font-semibold text-gray-800">{path}</span></h2>
+        <h2>{folderCount} Folders <span className="mx-2 opacity-50">|</span> {fileCount} Files</h2>
+      </footer>
     </div>
   );
 }

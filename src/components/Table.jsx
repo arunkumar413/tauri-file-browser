@@ -28,6 +28,38 @@ const formatSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
+const getFileIcon = (file) => {
+  if (file.is_dir) return '📁';
+  const name = file.name || '';
+  const idx = name.lastIndexOf('.');
+  const ext = idx > 0 ? name.substring(idx + 1).toLowerCase() : '';
+
+  switch (ext) {
+    case 'jpg': case 'jpeg': case 'png': case 'gif': case 'webp': case 'svg': case 'bmp': case 'ico':
+      return '🖼️';
+    case 'mp4': case 'webm': case 'avi': case 'mov': case 'mkv':
+      return '🎥';
+    case 'mp3': case 'wav': case 'ogg': case 'flac': case 'm4a':
+      return '🎵';
+    case 'pdf':
+      return '📕';
+    case 'doc': case 'docx': case 'rtf':
+      return '📘';
+    case 'txt': case 'md':
+      return '📝';
+    case 'js': case 'jsx': case 'ts': case 'tsx': case 'py': case 'rs': case 'html': case 'css': case 'json': case 'toml': case 'yaml': case 'yml':
+      return '💻';
+    case 'zip': case 'rar': case '7z': case 'tar': case 'gz':
+      return '📦';
+    case 'csv': case 'xls': case 'xlsx':
+      return '📊';
+    case 'ppt': case 'pptx':
+      return '📽️';
+    default:
+      return '📄';
+  }
+};
+
 const getTimeBucket = (timestamp) => {
   if (!timestamp) return 'Unknown';
   const date = new Date(timestamp * 1000);
@@ -48,7 +80,7 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
   // If no files, just return empty state
   if (!files || files.length === 0) {
     return (
-      <div className="flex justify-center items-center h-full text-gray-500">
+      <div className="flex flex-1 w-full justify-center items-center h-full text-gray-500">
         No files to display.
       </div>
     );
@@ -86,10 +118,34 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
     return acc;
   }, {});
 
+  // Sort files within each group by extension, then alphabetically by name
+  Object.values(groupedFiles).forEach(groupFiles => {
+    groupFiles.sort((a, b) => {
+      const getExt = (name, isDir) => {
+        if (isDir) return '';
+        const idx = name.lastIndexOf('.');
+        return idx > 0 ? name.substring(idx + 1).toLowerCase() : '';
+      };
+      
+      const extA = getExt(a.name, a.is_dir);
+      const extB = getExt(b.name, b.is_dir);
+      
+      if (extA < extB) return -1;
+      if (extA > extB) return 1;
+      
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      
+      return 0;
+    });
+  });
+
   return (
-    <div className="w-full h-full overflow-y-auto">
+    <div className="w-full h-full flex-1 overflow-y-auto">
       <table className="w-full text-sm text-left text-gray-500">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-20 shadow-sm border-b border-gray-200">
           <tr>
             <th scope="col" className="px-6 py-3">Name</th>
             <th scope="col" className="px-6 py-3">Type</th>
@@ -99,50 +155,48 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
             <th scope="col" className="px-6 py-3">Date Accessed</th>
           </tr>
         </thead>
-        <tbody>
-          {Object.entries(groupedFiles).map(([dateLabel, groupFiles]) => (
-            <React.Fragment key={dateLabel}>
-              <tr className="bg-gray-100/80">
-                <td colSpan="6" className="px-6 py-2 font-semibold text-gray-800 text-xs shadow-sm sticky top-10">
-                  {dateLabel}
+        {Object.entries(groupedFiles).map(([dateLabel, groupFiles]) => (
+          <tbody key={dateLabel}>
+            <tr className="bg-gray-100">
+              <td colSpan="6" className="px-6 py-2 font-semibold text-gray-800 text-xs shadow-sm sticky top-10 z-10 bg-gray-100/95 backdrop-blur-sm border-b border-gray-200">
+                {dateLabel}
+              </td>
+            </tr>
+            {groupFiles.map((file, idx) => (
+              <tr
+                key={`${file.path}-${idx}`}
+                className="bg-white border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-colors"
+                onDoubleClick={() => {
+                  if (file.is_dir && onFolderDoubleClick) {
+                    onFolderDoubleClick(file.path);
+                  }
+                }}
+              >
+                <td className="px-6 py-4 text-lg text-gray-900 truncate max-w-[300px]" title={file.name}>
+                  <div className="flex items-center gap-2">
+                    {getFileIcon(file)}
+                    <span className="truncate">{file.name}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  {file.is_dir ? 'Folder' : 'File'}
+                </td>
+                <td className="px-6 py-4">
+                  {file.is_dir ? '-' : formatSize(file.size)}
+                </td>
+                <td className="px-6 py-4">
+                  {formatDate(file.modified)}
+                </td>
+                <td className="px-6 py-4">
+                  {formatDate(file.created)}
+                </td>
+                <td className="px-6 py-4">
+                  {formatDate(file.accessed)}
                 </td>
               </tr>
-              {groupFiles.map((file, idx) => (
-                <tr
-                  key={`${file.path}-${idx}`}
-                  className="bg-white border-b hover:bg-blue-50 cursor-pointer transition-colors"
-                  onDoubleClick={() => {
-                    if (file.is_dir && onFolderDoubleClick) {
-                      onFolderDoubleClick(file.path);
-                    }
-                  }}
-                >
-                  <td className="px-6 py-4 font-medium text-gray-900 truncate max-w-[300px]" title={file.name}>
-                    <div className="flex items-center gap-2">
-                       {file.is_dir ? '📁' : '📄'} 
-                       <span className="truncate">{file.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    {file.is_dir ? 'Folder' : 'File'}
-                  </td>
-                  <td className="px-6 py-4">
-                    {file.is_dir ? '-' : formatSize(file.size)}
-                  </td>
-                  <td className="px-6 py-4">
-                    {formatDate(file.modified)}
-                  </td>
-                  <td className="px-6 py-4">
-                    {formatDate(file.created)}
-                  </td>
-                  <td className="px-6 py-4">
-                    {formatDate(file.accessed)}
-                  </td>
-                </tr>
-              ))}
-            </React.Fragment>
-          ))}
-        </tbody>
+            ))}
+          </tbody>
+        ))}
       </table>
     </div>
   );
