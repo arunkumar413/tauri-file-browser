@@ -14,3 +14,60 @@ This is a simple tabular based file browser built using Rust+Reactjs using tauri
 
 ## Screenshot
 ![screenshot](/src/screenshots/screenshot-1.png?raw=true)
+
+
+
+
+## 🛠️ Prerequisites
+
+### Make sure these are installed:
+
+#### 1. Node.js**
+* Install latest LTS from Node.js (https://nodejs.org/en/download)
+* **Verify:**
+* `node -v`
+* `npm -v`
+#### 2. Rust
+
+* Install via Rust (rustup):
+
+* curl https://sh.rustup.rs -sSf | sh
+
+Then:
+
+* rustc -V
+* cargo -V
+#### 3. Tauri Prerequisites
+
+**Follow official setup from Tauri:** (https://v2.tauri.app/start/prerequisites/)
+
+On Linux (Ubuntu/Debian):
+```
+sudo apt update
+sudo apt install -y \
+  libwebkit2gtk-4.1-dev \
+  build-essential \
+  curl \
+  wget \
+  file \
+  libxdo-dev \
+  libssl-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev
+  ```
+
+### Installation Steps
+1. Clone the repo
+git clone https://github.com/arunkumar413/tauri-file-browser.git
+`cd tauri-file-browser`
+2. `npm install` to install the frontend dependencies (Vite + React):
+
+
+3.`npm run tauri dev` to run the app in development mode
+
+
+This will:
+
+1) Start Vite dev server
+2) Compile Rust backend
+3) Launch the desktop app
