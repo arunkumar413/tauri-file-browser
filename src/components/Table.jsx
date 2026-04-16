@@ -1,34 +1,6 @@
 import React from "react";
-import {
-  isToday,
-  isYesterday,
-  isThisWeek,
-  isThisMonth,
-  isThisYear,
-  isSameWeek,
-  isSameMonth,
-  isSameYear,
-  subWeeks,
-  subMonths,
-  subYears,
-  format,
-} from "date-fns";
-
-// Format unix timestamp to a short date (YYYY-MM-DD)
-const formatDate = (timestamp) => {
-  if (!timestamp) return "Unknown";
-  const d = new Date(timestamp * 1000);
-  // return d.toLocaleDateString();
-  return format(d, "dd-MMM-yyyy");
-};
-
-const formatSize = (bytes) => {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-};
+import { EXT_ICON_MAP } from "../constants";
+import { formatDate, formatSize, getTimeBucket } from "../utils";
 
 const getFileIcon = (file) => {
   if (file.is_dir) return "📁";
@@ -36,85 +8,18 @@ const getFileIcon = (file) => {
   const idx = name.lastIndexOf(".");
   const ext = idx > 0 ? name.substring(idx + 1).toLowerCase() : "";
 
-  switch (ext) {
-    case "jpg":
-    case "jpeg":
-    case "png":
-    case "gif":
-    case "webp":
-    case "svg":
-    case "bmp":
-    case "ico":
-      return "🖼️";
-    case "mp4":
-    case "webm":
-    case "avi":
-    case "mov":
-    case "mkv":
-      return "🎥";
-    case "mp3":
-    case "wav":
-    case "ogg":
-    case "flac":
-    case "m4a":
-      return "🎵";
-    case "pdf":
-      return "📕";
-    case "doc":
-    case "docx":
-    case "rtf":
-      return "📘";
-    case "txt":
-    case "md":
-      return "📝";
-    case "js":
-    case "jsx":
-    case "ts":
-    case "tsx":
-    case "py":
-    case "rs":
-    case "html":
-    case "css":
-    case "json":
-    case "toml":
-    case "yaml":
-    case "yml":
-      return "💻";
-    case "zip":
-    case "rar":
-    case "7z":
-    case "tar":
-    case "gz":
-      return "📦";
-    case "csv":
-    case "xls":
-    case "xlsx":
-      return "📊";
-    case "ppt":
-    case "pptx":
-      return "📽️";
-    default:
-      return "📄";
-  }
+  const match = EXT_ICON_MAP.find((group) => group.exts.includes(ext));
+  return match ? match.icon : "📄";
 };
 
-const getTimeBucket = (timestamp) => {
-  if (!timestamp) return "Unknown";
-  const date = new Date(timestamp * 1000);
-  const now = new Date();
-
-  if (isToday(date)) return "Today";
-  if (isYesterday(date)) return "Yesterday";
-  if (isThisWeek(date)) return "This Week";
-  if (isSameWeek(date, subWeeks(now, 1))) return "Last Week";
-  if (isThisMonth(date)) return "This Month";
-  if (isSameMonth(date, subMonths(now, 1))) return "Last Month";
-  if (isThisYear(date)) return "This Year";
-  if (isSameYear(date, subYears(now, 1))) return "Last Year";
-  return "Older";
-};
-
-export default function Table({ files, sortOption, onFolderDoubleClick }) {
+export function Table({
+  files,
+  sortOption,
+  onFolderDoubleClick,
+  addTab,
+  loadDirectory,
+  updateTabPath,
+}) {
   // If no files, just return empty state
   if (!files || files.length === 0) {
     return (
@@ -206,14 +111,18 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
             <th scope="col" className="px-6 py-3">
               Date Accessed
             </th>
+
+            <th scope="col" className="px-6 py-3">
+              Actions
+            </th>
           </tr>
         </thead>
         {Object.entries(groupedFiles).map(([dateLabel, groupFiles]) => (
-          <tbody key={dateLabel} className="bg-sky-900">
-            <tr className="bg-gray-50/90">
+          <tbody key={dateLabel} className="">
+            <tr className="">
               <td
                 colSpan="8"
-                className="px-6 py-2 font-semibold text-gray-800 text-lg shadow-sm sticky top-10 z-10 bg-gray-50/90"
+                className="px-6 py-2 font-semibold text-lg sticky top-10 z-10 bg-white"
               >
                 {dateLabel}
               </td>
@@ -225,6 +134,7 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
                 onDoubleClick={() => {
                   if (file.is_dir && onFolderDoubleClick) {
                     onFolderDoubleClick(file.path);
+                    updateTabPath(key, file.path);
                   }
                 }}
               >
@@ -257,6 +167,54 @@ export default function Table({ files, sortOption, onFolderDoubleClick }) {
                 <td className="px-6 py-4">{formatDate(file.modified)}</td>
                 <td className="px-6 py-4">{formatDate(file.created)}</td>
                 <td className="px-6 py-4">{formatDate(file.accessed)}</td>
+                {file.is_dir ? (
+                  <td
+                    onClick={() => {
+                      loadDirectory(file.path);
+                      addTab(file.path);
+                    }}
+                    className="px-6 py-4 flex justify-flex-start align-middle gap-2"
+                  >
+                    <div class="relative group inline-block">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        class="cursor-pointer"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <path d="M15 3h6v6" />
+                        <path d="M10 14 21 3" />
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      </svg>
+
+                      <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-100 text-blue-950 text-xs px-2 py-1 rounded whitespace-nowrap z-20">
+                        Open in new tab
+                      </span>
+                    </div>
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-trash2-icon lucide-trash-2"
+                    >
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>
