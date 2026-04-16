@@ -8,7 +8,7 @@ export function Grid({ files }) {
     file.is_dir ? (
       <div
         key={index}
-        className="flex flex-col justify-center items-center w-28"
+        className="flex flex-col justify-center items-center w-28 hover:bg-gray-50 p-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -16,20 +16,20 @@ export function Grid({ files }) {
           height="60"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="currentColor"
+          stroke="stroke-yellow-800"
           strokeWidth="1"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="lucide lucide-folder-icon lucide-folder stroke-gray-500"
+          className="lucide lucide-folder-icon lucide-folder stroke-blue-500"
         >
           <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
         </svg>
-        <div className="text-center">{file.name}</div>
+        <div className="text-center break-all">{file.name}</div>
       </div>
     ) : (
       <div
         key={index}
-        className="flex flex-col justify-start items-center mx-4 w-28"
+        className="flex flex-col justify-start items-center w-28 hover:bg-gray-50 p-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +46,7 @@ export function Grid({ files }) {
           <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
           <path d="M14 2v5a1 1 0 0 0 1 1h5" />
         </svg>
-        <div className="text-center">{file.name}</div>
+        <div className="text-center break-all">{file.name}</div>
       </div>
     ),
   );

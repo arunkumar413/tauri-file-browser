@@ -335,7 +335,7 @@ export function Tab(props) {
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="lucide lucide-rows3-icon lucide-rows-3"
+                className={`lucide lucide-rows3-icon lucide-rows-3 ${view === "table" ? "stroke-blue-500" : ""}`}
               >
                 <rect width="18" height="18" x="3" y="3" rx="2" />
                 <path d="M21 9H3" />
@@ -353,7 +353,7 @@ export function Tab(props) {
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="lucide lucide-layout-grid-icon lucide-layout-grid"
+                className={`lucide lucide-layout-grid-icon lucide-layout-grid ${view === "grid" ? "stroke-blue-500" : ""}`}
               >
                 <rect width="7" height="7" x="3" y="3" rx="1" />
                 <rect width="7" height="7" x="14" y="3" rx="1" />
