@@ -1,21 +1,30 @@
-use std::fs;
 use crate::models::file::FileEntry;
+use crate::services::filter_hidden_files;
+use std::fs;
 use std::time::UNIX_EPOCH;
 
-pub fn read_directory(path: &str) -> Result<Vec<FileEntry>, String> {
+pub fn read_directory(path: &str, show_hidden: bool) -> Result<Vec<FileEntry>, String> {
     let mut entries = Vec::new();
 
     let dir = fs::read_dir(path).map_err(|e| e.to_string())?;
 
     for entry in dir {
         let entry = entry.map_err(|e| e.to_string())?;
+
+        if !show_hidden && filter_hidden_files::is_hidden(&entry) {
+            continue;
+        }
+
         let metadata = entry.metadata().map_err(|e| e.to_string())?;
-        
-        let name = entry.file_name().into_string().unwrap_or_else(|_| String::from("unknown"));
+
+        let name = entry
+            .file_name()
+            .into_string()
+            .unwrap_or_else(|_| String::from("unknown"));
         let path = entry.path().to_string_lossy().into_owned();
         let is_dir = metadata.is_dir();
         let size = metadata.len();
-        
+
         let modified = match metadata.modified() {
             Ok(time) => time.duration_since(UNIX_EPOCH).ok().map(|d| d.as_secs()),
             Err(_) => None,

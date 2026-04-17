@@ -22,7 +22,8 @@ pub fn run() {
             greet,
             get_default_pwd,
             commands::file_system::read_dir,
-            commands::file_system::get_home_dir
+            commands::file_system::get_home_dir,
+            commands::file_system::open_terminal
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

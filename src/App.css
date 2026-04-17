@@ -8,7 +8,7 @@
         "header header"
         "sidebar main"
         "footer footer";
-    height: 100vh;
+    height: 100%;
 }
 
 /* Areas */
@@ -20,7 +20,6 @@
 
 .sidebar {
     grid-area: sidebar;
-    background-color: aliceblue;
     padding: 1rem;
 }
 

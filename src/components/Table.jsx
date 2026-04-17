@@ -18,7 +18,6 @@ export function Table({
   onFolderDoubleClick,
   addTab,
   loadDirectory,
-  updateTabPath,
 }) {
   // If no files, just return empty state
   if (!files || files.length === 0) {
@@ -134,7 +133,6 @@ export function Table({
                 onDoubleClick={() => {
                   if (file.is_dir && onFolderDoubleClick) {
                     onFolderDoubleClick(file.path);
-                    updateTabPath(key, file.path);
                   }
                 }}
               >

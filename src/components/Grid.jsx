@@ -1,4 +1,4 @@
-export function Grid({ files }) {
+export function Grid({ files, onFolderDoubleClick }) {
   const sortedFiles = [...files].sort((a, b) => {
     if (a.is_dir === b.is_dir) return 0;
     return a.is_dir ? -1 : 1;
@@ -8,7 +8,12 @@ export function Grid({ files }) {
     file.is_dir ? (
       <div
         key={index}
-        className="flex flex-col justify-center items-center w-28 hover:bg-gray-50 p-2"
+        className="flex flex-col justify-center items-center w-28 hover:bg-gray-50 p-2 cursor-pointer"
+        onDoubleClick={() => {
+          if (onFolderDoubleClick) {
+            onFolderDoubleClick(file.path);
+          }
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +34,7 @@ export function Grid({ files }) {
     ) : (
       <div
         key={index}
-        className="flex flex-col justify-start items-center w-28 hover:bg-gray-50 p-2"
+        className="flex flex-col justify-start items-center w-28 hover:bg-gray-50 p-2 cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -55,5 +60,5 @@ export function Grid({ files }) {
     <div className="flex flex-wrap justify-start items-start gap-4">
       {filteredFileElements}
     </div>
-  );
+  )
 }

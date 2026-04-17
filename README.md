@@ -14,9 +14,10 @@ This is a simple tabular based file browser built using Rust+Reactjs using tauri
 
 ## Screenshot
 ![screenshot-1](/src/screenshots/screenshot-1.png?raw=true)
-
-
 ![screenshot-2](/src/screenshots/screenshot-2.png?raw=true)
+![screenshot-3](/src/screenshots/screenshot-3.png?raw=true)
+
+
 
 
 
